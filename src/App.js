@@ -85,9 +85,7 @@ export default function PizzamicaMejorada() {
       message += `⏰ HORARIO: Mañana o después\n\n`;
     }
     
-    message += '==============================\n';
     message += `PRODUCTOS:\n`;
-    message += '==============================\n';
     
     cart.forEach((item) => {
       if (item.type === 'promo') {
@@ -116,9 +114,7 @@ export default function PizzamicaMejorada() {
       }
     });
 
-   message += '==============================\n';
     message += `💰 TOTAL: $${calculateTotal().toLocaleString('es-CL')}\n`;
-   message += '==============================\n';
     message += `✨ ¡Gracias por tu pedido! ✨`;
 
     return encodeURIComponent(message);
