@@ -1,0 +1,9 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
+  "env": {
+    "REACT_APP_WHATSAPP_NUMBER": "56950249329"
+  },
+  "framework": "react",
+  "nodeVersion": "18.x"
+}
