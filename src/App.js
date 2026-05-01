@@ -10,13 +10,41 @@ export default function PizzamicaMejorada() {
   const [direccion, setDireccion] = useState('');
   const [nombre, setNombre] = useState('');
   const [horario, setHorario] = useState('para-ahora');
+  const [metodoPago, setMetodoPago] = useState('transferencia'); // 'transferencia' o 'efectivo'
+  const [vuelto, setVuelto] = useState('no'); // 'no', 'si'
+  const [montoVuelto, setMontoVuelto] = useState('');
 
   const pizzas = [
-    { id: 'margarita', name: 'Margarita', emoji: '🧀' },
-    { id: 'pepperoni', name: 'Pepperoni', emoji: '🌶️' },
-    { id: 'napolitana', name: 'Napolitana', emoji: '🍅' },
-    { id: 'jamon', name: 'Jamón', emoji: '🍖' },
-    { id: 'italiana', name: 'Italiana', emoji: '🌿' },
+    { 
+      id: 'margarita', 
+      name: 'Margarita', 
+      emoji: '🟢',
+      desc: 'Salsa de tomate, mozzarella, albahaca fresca y aceite de oliva'
+    },
+    { 
+      id: 'pepperoni', 
+      name: 'Pepperoni', 
+      emoji: '🔴',
+      desc: 'Salsa de tomate, mozzarella, pepperoni y aceite de oliva • Sabor más intenso'
+    },
+    { 
+      id: 'napolitana', 
+      name: 'Napolitana', 
+      emoji: '🍅',
+      desc: 'Salsa de tomate, mozzarella, tomate fresco, orégano y aceite de oliva'
+    },
+    { 
+      id: 'jamon', 
+      name: 'Jamón', 
+      emoji: '🍖',
+      desc: 'Salsa de tomate, mozzarella, jamón, albahaca fresca y aceite de oliva'
+    },
+    { 
+      id: 'italiana', 
+      name: 'Italiana', 
+      emoji: '🇮🇹',
+      desc: 'Salsa de tomate, mozzarella, tomate fresco, albahaca fresca y aceite de oliva'
+    },
   ];
 
   const waffles = [
@@ -85,7 +113,9 @@ export default function PizzamicaMejorada() {
       message += `⏰ HORARIO: Mañana o después\n\n`;
     }
     
+    message += `${'='*30}\n`;
     message += `PRODUCTOS:\n`;
+    message += `${'='*30}\n\n`;
     
     cart.forEach((item) => {
       if (item.type === 'promo') {
@@ -114,7 +144,22 @@ export default function PizzamicaMejorada() {
       }
     });
 
+    message += `${'='*30}\n`;
     message += `💰 TOTAL: $${calculateTotal().toLocaleString('es-CL')}\n`;
+    message += `${'='*30}\n\n`;
+    
+    message += `💳 PAGO:\n`;
+    if (metodoPago === 'transferencia') {
+      message += `Método: Transferencia bancaria\n\n`;
+    } else {
+      message += `Método: Efectivo\n`;
+      if (vuelto === 'si' && montoVuelto) {
+        message += `Vuelto: Sí, en billetes de $${montoVuelto}\n\n`;
+      } else if (vuelto === 'no') {
+        message += `Vuelto: No necesito\n\n`;
+      }
+    }
+    
     message += `✨ ¡Gracias por tu pedido! ✨`;
 
     return encodeURIComponent(message);
@@ -422,9 +467,89 @@ export default function PizzamicaMejorada() {
 
                 {/* RESUMEN */}
                 <div className="border-t border-green-500 pt-4">
-                  <div className="flex justify-between text-2xl font-black text-green-400 mb-4">
+                  <div className="flex justify-between text-2xl font-black text-green-400 mb-6">
                     <span>TOTAL:</span>
                     <span>${calculateTotal().toLocaleString('es-CL')}</span>
+                  </div>
+
+                  {/* MÉTODO DE PAGO */}
+                  <div className="bg-red-500 bg-opacity-20 border-l-4 border-red-400 p-4 rounded-lg mb-4">
+                    <h4 className="text-white font-bold mb-4">💳 MÉTODO DE PAGO</h4>
+                    
+                    <div className="space-y-3">
+                      <label className="flex items-center gap-2 cursor-pointer p-3 bg-black bg-opacity-50 rounded hover:bg-opacity-70 transition">
+                        <input
+                          type="radio"
+                          name="pago"
+                          value="transferencia"
+                          checked={metodoPago === 'transferencia'}
+                          onChange={(e) => setMetodoPago(e.target.value)}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-white font-bold">💱 Transferencia Bancaria</span>
+                      </label>
+
+                      <label className="flex items-center gap-2 cursor-pointer p-3 bg-black bg-opacity-50 rounded hover:bg-opacity-70 transition">
+                        <input
+                          type="radio"
+                          name="pago"
+                          value="efectivo"
+                          checked={metodoPago === 'efectivo'}
+                          onChange={(e) => setMetodoPago(e.target.value)}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-white font-bold">💵 Efectivo</span>
+                      </label>
+                    </div>
+
+                    {/* OPCIONES DE VUELTO - SOLO SI EFECTIVO */}
+                    {metodoPago === 'efectivo' && (
+                      <div className="mt-4 pt-4 border-t border-red-400">
+                        <p className="text-white font-bold text-sm mb-3">¿Necesitas vuelto?</p>
+                        
+                        <div className="space-y-2">
+                          <label className="flex items-center gap-2 cursor-pointer p-2 bg-black bg-opacity-50 rounded hover:bg-opacity-70 transition">
+                            <input
+                              type="radio"
+                              name="vuelto"
+                              value="no"
+                              checked={vuelto === 'no'}
+                              onChange={(e) => setVuelto(e.target.value)}
+                              className="w-4 h-4"
+                            />
+                            <span className="text-white text-sm">No necesito vuelto</span>
+                          </label>
+
+                          <label className="flex items-center gap-2 cursor-pointer p-2 bg-black bg-opacity-50 rounded hover:bg-opacity-70 transition">
+                            <input
+                              type="radio"
+                              name="vuelto"
+                              value="si"
+                              checked={vuelto === 'si'}
+                              onChange={(e) => setVuelto(e.target.value)}
+                              className="w-4 h-4"
+                            />
+                            <span className="text-white text-sm">Sí, necesito vuelto</span>
+                          </label>
+                        </div>
+
+                        {/* CAMPO DE MONTO VUELTO */}
+                        {vuelto === 'si' && (
+                          <div className="mt-3">
+                            <label className="text-white text-sm font-bold block mb-2">
+                              ¿En billetes de cuánto?
+                            </label>
+                            <input
+                              type="text"
+                              value={montoVuelto}
+                              onChange={(e) => setMontoVuelto(e.target.value)}
+                              placeholder="Ej: 10000, 5000"
+                              className="w-full bg-black border-2 border-red-400 text-white p-2 rounded text-sm placeholder-gray-500 focus:outline-none focus:border-red-300"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <a
@@ -462,11 +587,14 @@ export default function PizzamicaMejorada() {
           {/* GRID PIZZAS - MÁS COMPACTO */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
             {pizzas.map((pizza) => (
-              <div key={pizza.id} className="card-gradient p-4 rounded-lg hover:transform hover:scale-105 transition-all">
+              <div key={pizza.id} className="card-gradient p-4 rounded-lg hover:transform hover:scale-105 transition-all group">
                 <div className="text-4xl mb-2 text-center">{pizza.emoji}</div>
-                <h4 className="text-sm font-bold text-center mb-3 text-white">
+                <h4 className="text-sm font-bold text-center mb-2 text-white">
                   {pizza.name}
                 </h4>
+                <p className="text-xs text-white text-center mb-3 leading-tight group-hover:block hidden">
+                  {pizza.desc}
+                </p>
                 <button
                   onClick={() => addToCart({ type: 'pizza', name: pizza.name, emoji: pizza.emoji, price: pizzaPrice })}
                   className="w-full bg-green-500 hover:bg-green-600 py-2 rounded-lg font-bold transition-all text-xs"
